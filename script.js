@@ -12,42 +12,56 @@ window.addEventListener("keydown", (event) => {
         numberButtonPressed(event);
     } else if (/[*x/=\+\-]|(Enter)/.test(event.key)) {
         operatorButtonPressed(event);
-    } else if (/(Backspace)|(Escape)/) {
+    } else if (/(Backspace)|(Escape)/.test(event.key)) {
         eraseButtonPressed(event);
     }
 });
 
 // Event Listeners for the buttons
 const numberButtonsContainer = document.querySelector(".number-buttons");
-numberButtonsContainer.addEventListener("click", numberButtonPressed);
+numberButtonsContainer.addEventListener("click", (event) => {
+    if (event.target.tagName === "BUTTON") {
+        numberButtonPressed(event); 
+    }
+});
 
 const operatorButtonContainer = document.querySelector(".right-side-buttons");
-operatorButtonContainer.addEventListener("click", operatorButtonPressed);
+operatorButtonContainer.addEventListener("click", (event) => {
+    if (event.target.tagName === "BUTTON") {
+        operatorButtonPressed(event); 
+    }
+});
 
 const eraseButtonContainer = document.querySelector(".clear-buttons");
-eraseButtonContainer.addEventListener("click", eraseButtonPressed);
+eraseButtonContainer.addEventListener("click", (event) => {
+    if (event.target.tagName === "BUTTON") {
+        eraseButtonPressed(event); 
+    }
+});
 
-// Functions used by Even listeners
+// Functions used by Event listeners
 function numberButtonPressed (event) {
+    let eventInfo = checkIfKeyPressOrButton(event);
+
     if (computed) return;
     if (!number1) {
-        handleDecimalCaseFirstInput(event);
+        handleDecimalCaseFirstInput(event, eventInfo);
         eqScreen.textContent = number1;
         return;
     }
 
     if (!operation) {
-        handleNumberGreaterThanOneDigit(event);
+        handleNumberGreaterThanOneDigit(event, eventInfo);
         eqScreen.textContent = number1;
         return;
     } 
 
     if (!number2) {
-        handleDecimalCaseFirstInput(event);
+        handleDecimalCaseFirstInput(event, eventInfo);
         eqScreen.textContent += " " + number2;
         return;
     } else {
-        handleNumberGreaterThanOneDigit(event);
+        handleNumberGreaterThanOneDigit(event, eventInfo);
         eqScreen.textContent = number1 + " " + operation + " " + number2;
     }
 
@@ -141,8 +155,7 @@ function checkIfKeyPressOrButton (event) {
     }
 }
 
-function handleDecimalCaseFirstInput (event) {
-    let eventInfo = checkIfKeyPressOrButton(event);
+function handleDecimalCaseFirstInput (event, eventInfo) {
 
     if (!number1) {
         if (eventInfo == ".") {
@@ -164,8 +177,7 @@ function handleDecimalCaseFirstInput (event) {
     
 }
 
-function handleNumberGreaterThanOneDigit (event) {
-    let eventInfo = checkIfKeyPressOrButton(event);
+function handleNumberGreaterThanOneDigit (event, eventInfo) {
     if (number1 && !operation) {
         if (number1.includes(".") && eventInfo == ".") {
             return;
