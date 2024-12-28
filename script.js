@@ -10,49 +10,16 @@ window.addEventListener("keydown", (event) => {
     if (/[0-9]|\./.test(event.key)) {
         numberButtonPressed(event);
     } 
-    // else if (/[+-*x\/=]/.test(event.key)) {
-    //     operatorButtonPressed(event);
-    // } 
+    else if (/[*x/=\+\-]|(Enter)/.test(event.key)) {
+        operatorButtonPressed(event);
+    } 
 });
 
 const numberButtonsContainer = document.querySelector(".number-buttons");
 numberButtonsContainer.addEventListener("click", numberButtonPressed);
 
 const operatorButtonContainer = document.querySelector(".right-side-buttons");
-operatorButtonContainer.addEventListener("click", (event) => {
-    let eventInfo = checkIfKeyPressOrButton(event);
-
-    if (!number1) return;
-
-    if (eventInfo == "/") {
-        eventInfo = "÷";
-    } else if (eventInfo == "*" ) {
-        eventInfo = "x";
-    }
-
-    if (!operation) {
-        operation = eventInfo;
-        eqScreen.textContent += " " + operation;
-        return;
-    }
-    if (eventInfo != "=" & !number2) return;
-    if (eventInfo == "=" && !number2) return;
-
-    if (eventInfo == "=" && number2) {
-        answerScreen.textContent = operate(operation, +number1, +number2);
-        computed = true;
-        return;
-    }
-
-    if (computed) {
-        number1 = answerScreen.textContent;
-        number2 = undefined;
-        operation = eventInfo;
-        computed = false;
-        eqScreen.textContent = answerScreen.textContent + " " + operation;
-    }
-
-});
+operatorButtonContainer.addEventListener("click", operatorButtonPressed);
 
 const eraseButtonContainer = document.querySelector(".clear-buttons");
 eraseButtonContainer.addEventListener("click", (event) => {
@@ -84,7 +51,44 @@ eraseButtonContainer.addEventListener("click", (event) => {
     }
 });
 
+function operatorButtonPressed (event) {
+    let eventInfo = checkIfKeyPressOrButton(event);
+
+    if (!number1) return;
+
+    if (eventInfo == "/") {
+        eventInfo = "÷";
+    } else if (eventInfo == "*" ) {
+        eventInfo = "x";
+    } else if (eventInfo == "Enter") {
+        eventInfo = "=";
+    }
+
+    if (!operation) {
+        operation = eventInfo;
+        eqScreen.textContent += " " + operation;
+        return;
+    }
+    if (eventInfo != "=" & !number2) return;
+    if (eventInfo == "=" && !number2) return;
+
+    if (eventInfo == "=" && number2) {
+        answerScreen.textContent = operate(operation, +number1, +number2);
+        computed = true;
+        return;
+    }
+
+    if (computed) {
+        number1 = answerScreen.textContent;
+        number2 = undefined;
+        operation = eventInfo;
+        computed = false;
+        eqScreen.textContent = answerScreen.textContent + " " + operation;
+    }
+} 
+
 function numberButtonPressed (event) {
+    if (computed) return;
     if (!number1) {
         handleDecimalCaseFirstInput(event);
         eqScreen.textContent = number1;
