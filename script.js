@@ -6,15 +6,18 @@ let computed;
 let eqScreen = document.querySelector(".equation-screen");
 let answerScreen = document.querySelector(".answer-screen");
 
+// Event listeners for keys that are compatible
 window.addEventListener("keydown", (event) => {
     if (/[0-9]|\./.test(event.key)) {
         numberButtonPressed(event);
-    } 
-    else if (/[*x/=\+\-]|(Enter)/.test(event.key)) {
+    } else if (/[*x/=\+\-]|(Enter)/.test(event.key)) {
         operatorButtonPressed(event);
-    } 
+    } else if (/(Backspace)|(Escape)/) {
+        eraseButtonPressed(event);
+    }
 });
 
+// Event Listeners for the buttons
 const numberButtonsContainer = document.querySelector(".number-buttons");
 numberButtonsContainer.addEventListener("click", numberButtonPressed);
 
@@ -22,34 +25,33 @@ const operatorButtonContainer = document.querySelector(".right-side-buttons");
 operatorButtonContainer.addEventListener("click", operatorButtonPressed);
 
 const eraseButtonContainer = document.querySelector(".clear-buttons");
-eraseButtonContainer.addEventListener("click", (event) => {
-    if (!isButton(event)) return;
-    if (event.target.innerText == "Clear") {
-        number1 = undefined;
-        number2 = undefined;
-        operation = undefined;
-        computed = false;
-        eqScreen.textContent = "";
-        answerScreen.textContent = "";
-    }
-    if (event.target.innerText == "Delete") {
-        if (!number1) return;
-        if (computed) return;
-        if (!operation) {
-            number1 = number1.slice(0,-1);
-            eqScreen.textContent = number1;
-            return;
-        }
-        if (!number2) {
-            operation = undefined;
-            eqScreen.textContent = number1;
-            return;
-        }
+eraseButtonContainer.addEventListener("click", eraseButtonPressed);
 
-        number2 = number2.slice(0,-1);
+// Functions used by Even listeners
+function numberButtonPressed (event) {
+    if (computed) return;
+    if (!number1) {
+        handleDecimalCaseFirstInput(event);
+        eqScreen.textContent = number1;
+        return;
+    }
+
+    if (!operation) {
+        handleNumberGreaterThanOneDigit(event);
+        eqScreen.textContent = number1;
+        return;
+    } 
+
+    if (!number2) {
+        handleDecimalCaseFirstInput(event);
+        eqScreen.textContent += " " + number2;
+        return;
+    } else {
+        handleNumberGreaterThanOneDigit(event);
         eqScreen.textContent = number1 + " " + operation + " " + number2;
     }
-});
+
+}
 
 function operatorButtonPressed (event) {
     let eventInfo = checkIfKeyPressOrButton(event);
@@ -87,31 +89,43 @@ function operatorButtonPressed (event) {
     }
 } 
 
-function numberButtonPressed (event) {
-    if (computed) return;
-    if (!number1) {
-        handleDecimalCaseFirstInput(event);
-        eqScreen.textContent = number1;
-        return;
+function eraseButtonPressed (event) {
+    let eventInfo = checkIfKeyPressOrButton(event);
+    
+    if (eventInfo == "Backspace") {
+        eventInfo = "Delete";
+    } else if (eventInfo == "Escape") {
+        eventInfo = "Clear";
+    }   
+
+    if (eventInfo == "Clear") {
+        number1 = undefined;
+        number2 = undefined;
+        operation = undefined;
+        computed = false;
+        eqScreen.textContent = "";
+        answerScreen.textContent = "";
     }
+    if (eventInfo == "Delete") {
+        if (!number1) return;
+        if (computed) return;
+        if (!operation) {
+            number1 = number1.slice(0,-1);
+            eqScreen.textContent = number1;
+            return;
+        }
+        if (!number2) {
+            operation = undefined;
+            eqScreen.textContent = number1;
+            return;
+        }
 
-    if (!operation) {
-        handleNumberGreaterThanOneDigit(event);
-        eqScreen.textContent = number1;
-        return;
-    } 
-
-    if (!number2) {
-        handleDecimalCaseFirstInput(event);
-        eqScreen.textContent += " " + number2;
-        return;
-    } else {
-        handleNumberGreaterThanOneDigit(event);
+        number2 = number2.slice(0,-1);
         eqScreen.textContent = number1 + " " + operation + " " + number2;
     }
-
 }
 
+// Helper Functions
 function checkIfKeyPressOrButton (event) {
     let eventType;
     if (event.key) {
