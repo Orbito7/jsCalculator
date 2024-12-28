@@ -15,6 +15,7 @@ body {
     display: flex;
     flex-direction: column;
     max-width: 40%;
+    min-width: 340px;
     justify-content: center;
     align-items: center;
     border: 10px solid #6A1E55;
