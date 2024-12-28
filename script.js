@@ -6,65 +6,39 @@ let computed;
 let eqScreen = document.querySelector(".equation-screen");
 let answerScreen = document.querySelector(".answer-screen");
 
-const numberButtonsContainer = document.querySelector(".number-buttons");
-numberButtonsContainer.addEventListener("click", (event)=> {
-    if (!isButton(event)) return;
-    if (!number1) {
-        if (event.target.innerText == ".") {
-            number1 = "0.";
-        } else {
-            number1 = event.target.innerText;
-        }
-        eqScreen.textContent = number1;
-        return;
-    }
-
-    if (!operation) {
-        if (number1.includes(".") && event.target.innerText == ".") {
-            return;
-        }
-        number1 = number1 + event.target.innerText;
-        if (number1.length >= 10) {
-            number1 = parseFloat(number1).toExponential();
-        }
-        eqScreen.textContent = number1;
-        return;
+window.addEventListener("keydown", (event) => {
+    if (/[0-9]|\./.test(event.key)) {
+        numberButtonPressed(event);
     } 
-    
-    if (!number2) {
-        if (event.target.innerText == ".") {
-            number2 = "0.";
-        } else {
-            number2 = event.target.innerText;
-        }
-        eqScreen.textContent += " " + number2;
-        return;
-    } else {
-        if (number2.includes(".") && event.target.innerText == ".") {
-            return;
-        }
-        number2 = number2 + event.target.innerText;
-        if (number2.length >= 10) {
-            number2 = parseFloat(number2).toExponential();
-        }
-        eqScreen.textContent = number1 + " " + operation + " " + number2;
-    }
-
+    // else if (/[+-*x\/=]/.test(event.key)) {
+    //     operatorButtonPressed(event);
+    // } 
 });
+
+const numberButtonsContainer = document.querySelector(".number-buttons");
+numberButtonsContainer.addEventListener("click", numberButtonPressed);
 
 const operatorButtonContainer = document.querySelector(".right-side-buttons");
 operatorButtonContainer.addEventListener("click", (event) => {
-    if (!isButton(event)) return;
+    let eventInfo = checkIfKeyPressOrButton(event);
+
     if (!number1) return;
+
+    if (eventInfo == "/") {
+        eventInfo = "÷";
+    } else if (eventInfo == "*" ) {
+        eventInfo = "x";
+    }
+
     if (!operation) {
-        operation = event.target.innerText;
+        operation = eventInfo;
         eqScreen.textContent += " " + operation;
         return;
     }
-    if (event.target.innerText != "=" & !number2) return;
-    if (event.target.innerText == "=" && !number2) return;
+    if (eventInfo != "=" & !number2) return;
+    if (eventInfo == "=" && !number2) return;
 
-    if (event.target.innerText == "=" && number2) {
+    if (eventInfo == "=" && number2) {
         answerScreen.textContent = operate(operation, +number1, +number2);
         computed = true;
         return;
@@ -73,7 +47,7 @@ operatorButtonContainer.addEventListener("click", (event) => {
     if (computed) {
         number1 = answerScreen.textContent;
         number2 = undefined;
-        operation = event.target.innerText;
+        operation = eventInfo;
         computed = false;
         eqScreen.textContent = answerScreen.textContent + " " + operation;
     }
@@ -110,6 +84,92 @@ eraseButtonContainer.addEventListener("click", (event) => {
     }
 });
 
+function numberButtonPressed (event) {
+    if (!number1) {
+        handleDecimalCaseFirstInput(event);
+        eqScreen.textContent = number1;
+        return;
+    }
+
+    if (!operation) {
+        handleNumberGreaterThanOneDigit(event);
+        eqScreen.textContent = number1;
+        return;
+    } 
+
+    if (!number2) {
+        handleDecimalCaseFirstInput(event);
+        eqScreen.textContent += " " + number2;
+        return;
+    } else {
+        handleNumberGreaterThanOneDigit(event);
+        eqScreen.textContent = number1 + " " + operation + " " + number2;
+    }
+
+}
+
+function checkIfKeyPressOrButton (event) {
+    let eventType;
+    if (event.key) {
+        eventType = "KEY";
+    } else if (event.target.innerText) {
+        eventType = "BUTTON";
+    }
+
+    if (eventType == "KEY") {
+        return event.key;
+    } else if (eventType == "BUTTON") {
+        return event.target.innerText;
+    }
+}
+
+function handleDecimalCaseFirstInput (event) {
+    let eventInfo = checkIfKeyPressOrButton(event);
+
+    if (!number1) {
+        if (eventInfo == ".") {
+            number1 = "0.";
+        } else {
+            number1 = eventInfo;
+        }
+        return;
+    }
+
+    if (!number2) {
+        if (eventInfo == ".") {
+            number2 = "0.";
+        } else {
+            number2 = eventInfo;
+        }
+        return;
+    }
+    
+}
+
+function handleNumberGreaterThanOneDigit (event) {
+    let eventInfo = checkIfKeyPressOrButton(event);
+    if (number1 && !operation) {
+        if (number1.includes(".") && eventInfo == ".") {
+            return;
+        }
+        number1 = number1 + eventInfo;
+        if (number1.length >= 10) {
+            number1 = parseFloat(number1).toExponential();
+        }
+        return;
+    }
+
+    if (number2) {
+        if (number2.includes(".") && eventInfo == ".") {
+            return;
+        }
+        number2 = number2 + eventInfo;
+        if (number2.length >= 10) {
+            number2 = parseFloat(number2).toExponential();
+        }
+        return;
+    }
+}
 function isButton(event) {
     return event.target.tagName === "BUTTON";
 }
