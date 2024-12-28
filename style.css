@@ -1,0 +1,97 @@
+* {
+    margin: 0;
+    box-sizing: border-box;
+    /* outline: 1px solid red; */
+}
+
+body {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.calc-body {
+    display: flex;
+    flex-direction: column;
+    max-width: 40%;
+    justify-content: center;
+    align-items: center;
+    border: 1px solid red;
+}
+
+.calc-screen {
+    display:flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 80px;
+    width: 280px;
+}
+
+.equation-screen{
+    width: 260px;
+    text-align: end;
+    color: black;
+    background-color: grey;
+}
+
+.answer-screen {
+    width: 260px;
+    text-align: end;
+    color: black;
+    background-color: grey;
+}
+
+.button-container {
+    display: flex;
+    flex-direction: row;
+}
+
+.left-side-buttons {
+    display: flex;
+    flex-direction: column;
+}
+
+.number-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap:10px;
+    width:200px;
+    margin-top: 10px;
+}
+
+.number-buttons button {
+    width: 60px;
+    height: 60px;
+}
+
+.number-zero {
+    flex: 0 0 130px;
+    width: 130px;
+}
+
+.right-side-buttons {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: end;
+    gap: 10px;
+    width: 80px;
+}
+
+.right-side-buttons button{
+    width: 60px;
+    height: 60px;
+}
+
+.clear-buttons {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+}
+
+.clear-buttons button {
+    width: 95px;
+    height: 60px
+}
