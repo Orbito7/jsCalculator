@@ -30,6 +30,7 @@ body {
 
 .equation-screen{
     width: 260px;
+    height: 20px;
     text-align: end;
     color: black;
     background-color: grey;
@@ -37,6 +38,7 @@ body {
 
 .answer-screen {
     width: 260px;
+    height: 20px;
     text-align: end;
     color: black;
     background-color: grey;

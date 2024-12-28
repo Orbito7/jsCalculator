@@ -24,6 +24,9 @@ numberButtonsContainer.addEventListener("click", (event)=> {
             return;
         }
         number1 = number1 + event.target.innerText;
+        if (number1.length >= 10) {
+            number1 = parseFloat(number1).toExponential();
+        }
         eqScreen.textContent = number1;
         return;
     } 
@@ -41,6 +44,9 @@ numberButtonsContainer.addEventListener("click", (event)=> {
             return;
         }
         number2 = number2 + event.target.innerText;
+        if (number2.length >= 10) {
+            number2 = parseFloat(number2).toExponential();
+        }
         eqScreen.textContent = number1 + " " + operation + " " + number2;
     }
 
@@ -69,9 +75,39 @@ operatorButtonContainer.addEventListener("click", (event) => {
         number2 = undefined;
         operation = event.target.innerText;
         computed = false;
-        eqScreen.textContent = answerScreen.textContent + operation;
+        eqScreen.textContent = answerScreen.textContent + " " + operation;
     }
 
+});
+
+const eraseButtonContainer = document.querySelector(".clear-buttons");
+eraseButtonContainer.addEventListener("click", (event) => {
+    if (!isButton(event)) return;
+    if (event.target.innerText == "Clear") {
+        number1 = undefined;
+        number2 = undefined;
+        operation = undefined;
+        computed = false;
+        eqScreen.textContent = "";
+        answerScreen.textContent = "";
+    }
+    if (event.target.innerText == "Delete") {
+        if (!number1) return;
+        if (computed) return;
+        if (!operation) {
+            number1 = number1.slice(0,-1);
+            eqScreen.textContent = number1;
+            return;
+        }
+        if (!number2) {
+            operation = undefined;
+            eqScreen.textContent = number1;
+            return;
+        }
+
+        number2 = number2.slice(0,-1);
+        eqScreen.textContent = number1 + " " + operation + " " + number2;
+    }
 });
 
 function isButton(event) {
