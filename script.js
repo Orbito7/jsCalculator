@@ -8,12 +8,14 @@ let answerScreen = document.querySelector(".answer-screen");
 
 // Event listeners for keys that are compatible
 window.addEventListener("keydown", (event) => {
-    if (/[0-9]|\./.test(event.key)) {
+    if (/^[0-9]$|\./.test(event.key)) {
         numberButtonPressed(event);
-    } else if (/[*x/=\+\-]|(Enter)/.test(event.key)) {
+    } else if (/^[*x/=\+\-]$|^(Enter)$/.test(event.key)) {
         operatorButtonPressed(event);
-    } else if (/(Backspace)|(Escape)/.test(event.key)) {
+    } else if (/^(Backspace)$|(^Escape$)/.test(event.key)) {
         eraseButtonPressed(event);
+    } else {
+       return;
     }
 });
 
